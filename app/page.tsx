@@ -1,102 +1,6 @@
 'use client';
-import { useEffect, useRef } from 'react';
 
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Particle system
-    const particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-    }> = [];
-
-    // Create particles
-    for (let i = 0; i < 80; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
-        size: Math.random() * 3 + 1,
-        opacity: Math.random() * 0.5 + 0.2
-      });
-    }
-
-    function animate() {
-      if (!canvas || !ctx) return;
-      
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Update and draw particles
-      particles.forEach((p, i) => {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce off edges
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 191, 255, ${p.opacity})`;
-        ctx.fill();
-
-        // Draw connections
-        particles.forEach((p2, j) => {
-          if (i === j) return;
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          if (distance < 150) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 191, 255, ${0.1 * (1 - distance / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        });
-
-        // Glow effect
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 4);
-        gradient.addColorStop(0, `rgba(0, 191, 255, ${p.opacity * 0.3})`);
-        gradient.addColorStop(1, 'rgba(0, 191, 255, 0)');
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    const handleResize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener('resize', handleResize);
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   return (
     <div style={{ 
       minHeight: '100vh',
@@ -105,93 +9,166 @@ export default function Home() {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Animated canvas background */}
-      anvas 
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 0
-        }}
-      />
+      {/* Animated particles CSS only */}
+      <div className="particles">
+        {[...Array(30)].map((_, i) => (
+          <div
+            key={i}
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${15 + Math.random() * 10}s`
+            }}
+          />
+        ))}
+      </div>
 
       {/* Animated gradient orbs */}
-      <div style={{
-        position: 'absolute',
-        top: '10%',
-        left: '10%',
-        width: '400px',
-        height: '400px',
-        background: 'radial-gradient(circle, rgba(0, 112, 243, 0.4) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 20s ease-in-out infinite',
-        zIndex: 0
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '60%',
-        right: '10%',
-        width: '350px',
-        height: '350px',
-        background: 'radial-gradient(circle, rgba(0, 191, 255, 0.3) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 15s ease-in-out infinite reverse',
-        zIndex: 0
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '10%',
-        left: '50%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(3, 64, 120, 0.4) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(60px)',
-        animation: 'float 18s ease-in-out infinite',
-        zIndex: 0
-      }} />
+      <div className="orb orb-1" />
+      <div className="orb orb-2" />
+      <div className="orb orb-3" />
 
       {/* Grid overlay */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundImage: 'linear-gradient(rgba(0, 191, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 191, 255, 0.03) 1px, transparent 1px)',
-        backgroundSize: '50px 50px',
-        zIndex: 0
-      }} />
+      <div className="grid-overlay" />
 
-      <style>{`
-        @keyframes float {
+      <style jsx>{`
+        .particles {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          z-index: 0;
+        }
+        
+        .particle {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: rgba(0, 191, 255, 0.6);
+          border-radius: 50%;
+          box-shadow: 0 0 10px rgba(0, 191, 255, 0.8),
+                      0 0 20px rgba(0, 191, 255, 0.4);
+          animation: float-particle 20s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+          0%, 100% {
+            transform: translate(0, 0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 1;
+          }
+          90% {
+            opacity: 1;
+          }
+          50% {
+            transform: translate(
+              ${Math.random() > 0.5 ? '' : '-'}${50 + Math.random() * 100}px,
+              ${Math.random() > 0.5 ? '' : '-'}${50 + Math.random() * 100}px
+            );
+          }
+        }
+
+        .orb {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(60px);
+          z-index: 0;
+        }
+
+        .orb-1 {
+          top: 10%;
+          left: 10%;
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle, rgba(0, 112, 243, 0.4) 0%, transparent 70%);
+          animation: float-orb-1 20s ease-in-out infinite;
+        }
+
+        .orb-2 {
+          top: 60%;
+          right: 10%;
+          width: 350px;
+          height: 350px;
+          background: radial-gradient(circle, rgba(0, 191, 255, 0.3) 0%, transparent 70%);
+          animation: float-orb-2 15s ease-in-out infinite;
+        }
+
+        .orb-3 {
+          bottom: 10%;
+          left: 50%;
+          width: 300px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(3, 64, 120, 0.4) 0%, transparent 70%);
+          animation: float-orb-3 18s ease-in-out infinite;
+        }
+
+        @keyframes float-orb-1 {
           0%, 100% { transform: translate(0, 0) scale(1); }
           33% { transform: translate(30px, -30px) scale(1.1); }
           66% { transform: translate(-20px, 20px) scale(0.9); }
         }
+
+        @keyframes float-orb-2 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-40px, 30px) scale(0.9); }
+          66% { transform: translate(30px, -20px) scale(1.1); }
+        }
+
+        @keyframes float-orb-3 {
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          50% { transform: translate(20px, -40px) scale(1.05); }
+        }
+
+        .grid-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-image: 
+            linear-gradient(rgba(0, 191, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 191, 255, 0.03) 1px, transparent 1px);
+          background-size: 50px 50px;
+          z-index: 0;
+        }
+
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes fadeIn {
           from { opacity: 0; }
           to { opacity: 1; }
         }
+
         @keyframes scaleIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
         }
-        .feature-card {
+
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(0, 191, 255, 0.4),
+                        0 0 40px rgba(0, 191, 255, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 30px rgba(0, 191, 255, 0.6),
+                        0 0 60px rgba(0, 191, 255, 0.3);
+          }
+        }
+
+        :global(.feature-card) {
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           position: relative;
           overflow: hidden;
         }
-        .feature-card::before {
+
+        :global(.feature-card::before) {
           content: '';
           position: absolute;
           top: -50%;
@@ -202,34 +179,15 @@ export default function Home() {
           opacity: 0;
           transition: opacity 0.4s ease;
         }
-        .feature-card:hover::before {
+
+        :global(.feature-card:hover::before) {
           opacity: 1;
         }
-        .feature-card:hover {
+
+        :global(.feature-card:hover) {
           transform: translateY(-10px) scale(1.02);
           box-shadow: 0 20px 60px rgba(0, 191, 255, 0.4);
-          border-color: rgba(0, 191, 255, 0.5);
-        }
-        .cta-button {
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s ease;
-        }
-        .cta-button::after {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 0;
-          height: 0;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.2);
-          transform: translate(-50%, -50%);
-          transition: width 0.6s, height 0.6s;
-        }
-        .cta-button:hover::after {
-          width: 300px;
-          height: 300px;
+          border-color: rgba(0, 191, 255, 0.5) !important;
         }
       `}</style>
 
@@ -255,7 +213,7 @@ export default function Home() {
         }}>
           SitoFacile
         </div>
-        <div style={{ display: 'flex', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <a href="/login" style={{ 
             color: 'white', 
             textDecoration: 'none',
@@ -264,14 +222,15 @@ export default function Home() {
           }}>
             Accedi
           </a>
-          <a href="/signup" className="cta-button" style={{
+          <a href="/signup" style={{
             backgroundColor: '#0070f3',
             color: 'white',
             padding: '10px 24px',
             borderRadius: '6px',
             textDecoration: 'none',
             fontWeight: '500',
-            boxShadow: '0 4px 15px rgba(0, 112, 243, 0.4)'
+            boxShadow: '0 4px 15px rgba(0, 112, 243, 0.4)',
+            transition: 'all 0.3s ease'
           }}>
             Inizia Gratis
           </a>
@@ -300,7 +259,7 @@ export default function Home() {
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
-            textShadow: '0 0 80px rgba(0, 191, 255, 0.5)'
+            animation: 'pulse-glow 3s ease-in-out infinite'
           }}>
             Il Tuo Sito Web<br/>in 5 Minuti
           </h1>
@@ -321,9 +280,10 @@ export default function Home() {
           gap: '20px',
           justifyContent: 'center',
           marginBottom: '80px',
-          animation: 'scaleIn 1s ease-out'
+          animation: 'scaleIn 1s ease-out',
+          flexWrap: 'wrap'
         }}>
-          <a href="/create" className="cta-button" style={{
+          <a href="/create" style={{
             backgroundColor: '#0070f3',
             color: 'white',
             padding: '18px 48px',
@@ -335,14 +295,6 @@ export default function Home() {
             transition: 'all 0.3s ease',
             display: 'inline-block',
             border: 'none'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-2px) scale(1.05)';
-            e.currentTarget.style.boxShadow = '0 12px 40px rgba(0, 112, 243, 0.8)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0) scale(1)';
-            e.currentTarget.style.boxShadow = '0 8px 30px rgba(0, 112, 243, 0.5)';
           }}>
             Crea il Tuo Sito →
           </a>
@@ -358,14 +310,6 @@ export default function Home() {
             transition: 'all 0.3s ease',
             display: 'inline-block',
             backdropFilter: 'blur(10px)'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)';
-            e.currentTarget.style.transform = 'translateY(-2px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)';
-            e.currentTarget.style.transform = 'translateY(0)';
           }}>
             Scopri di Più
           </a>
@@ -374,65 +318,35 @@ export default function Home() {
         {/* Stats */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '40px',
           marginBottom: '100px',
           animation: 'fadeIn 1.5s ease-out'
         }}>
-          <div style={{
-            padding: '30px',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            transition: 'transform 0.3s ease'
-          }}>
-            <div style={{ 
-              fontSize: '48px', 
-              fontWeight: 'bold', 
-              marginBottom: '10px',
-              background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>5 min</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)' }}>Tempo di creazione</div>
-          </div>
-          <div style={{
-            padding: '30px',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            transition: 'transform 0.3s ease'
-          }}>
-            <div style={{ 
-              fontSize: '48px', 
-              fontWeight: 'bold', 
-              marginBottom: '10px',
-              background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>€19</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)' }}>All'anno</div>
-          </div>
-          <div style={{
-            padding: '30px',
-            background: 'rgba(255,255,255,0.05)',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            transition: 'transform 0.3s ease'
-          }}>
-            <div style={{ 
-              fontSize: '48px', 
-              fontWeight: 'bold', 
-              marginBottom: '10px',
-              background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent'
-            }}>100%</div>
-            <div style={{ color: 'rgba(255,255,255,0.7)' }}>Responsive</div>
-          </div>
+          {[
+            { label: '5 min', desc: 'Tempo di creazione' },
+            { label: '€19', desc: "All'anno" },
+            { label: '100%', desc: 'Responsive' }
+          ].map((stat, i) => (
+            <div key={i} style={{
+              padding: '30px',
+              background: 'rgba(255,255,255,0.05)',
+              borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.1)',
+              backdropFilter: 'blur(10px)',
+              transition: 'transform 0.3s ease'
+            }}>
+              <div style={{ 
+                fontSize: '48px', 
+                fontWeight: 'bold', 
+                marginBottom: '10px',
+                background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>{stat.label}</div>
+              <div style={{ color: 'rgba(255,255,255,0.7)' }}>{stat.desc}</div>
+            </div>
+          ))}
         </div>
 
         {/* Features */}
@@ -496,7 +410,7 @@ export default function Home() {
           }}>
             Crea il tuo sito professionale in meno tempo di quanto ci vuole per un caffè
           </p>
-          <a href="/signup" className="cta-button" style={{
+          <a href="/signup" style={{
             backgroundColor: 'white',
             color: '#0a1128',
             padding: '18px 48px',
@@ -507,14 +421,6 @@ export default function Home() {
             display: 'inline-block',
             boxShadow: '0 8px 30px rgba(255,255,255,0.3)',
             transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.05)';
-            e.currentTarget.style.boxShadow = '0 12px 40px rgba(255,255,255,0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 8px 30px rgba(255,255,255,0.3)';
           }}>
             Inizia Ora Gratis
           </a>

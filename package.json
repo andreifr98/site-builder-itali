@@ -1,0 +1,16 @@
+{
+  "name": "site-builder-italia",
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "@neondatabase/serverless": "latest",
+    "next-auth": "latest"
+  }
+}

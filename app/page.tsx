@@ -13,10 +13,10 @@ export default function Home() {
           }
         });
       },
-      { threshold: 0.1 }
+      { threshold: 0.15, rootMargin: '-50px' }
     );
 
-    const cards = document.querySelectorAll('.scroll-card');
+    const cards = document.querySelectorAll('.scroll-reveal');
     cards.forEach((card) => observerRef.current?.observe(card));
 
     return () => observerRef.current?.disconnect();
@@ -75,17 +75,6 @@ export default function Home() {
         @keyframes scaleIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes flip-in-right {
-          0% {
-            opacity: 0;
-            transform: perspective(1000px) rotateY(90deg) translateX(100px);
-          }
-          100% {
-            opacity: 1;
-            transform: perspective(1000px) rotateY(0deg) translateX(0);
-          }
         }
 
         .particles {
@@ -159,23 +148,33 @@ export default function Home() {
           z-index: 0;
         }
 
-        .scroll-card {
+        /* Effetto rotazione 3D dall'asse centrale */
+        .scroll-reveal {
           opacity: 0;
-          transform: perspective(1000px) rotateY(90deg) translateX(100px);
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transform: perspective(1200px) rotateX(-25deg) translateY(50px);
+          transform-origin: center center;
+          transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .scroll-card.visible {
+        .scroll-reveal.visible {
           opacity: 1;
-          transform: perspective(1000px) rotateY(0deg) translateX(0);
+          transform: perspective(1200px) rotateX(0deg) translateY(0);
         }
+
+        /* Ritardo progressivo per le card in griglia */
+        .scroll-reveal:nth-child(1) { transition-delay: 0s; }
+        .scroll-reveal:nth-child(2) { transition-delay: 0.15s; }
+        .scroll-reveal:nth-child(3) { transition-delay: 0.3s; }
+        .scroll-reveal:nth-child(4) { transition-delay: 0.45s; }
+        .scroll-reveal:nth-child(5) { transition-delay: 0.6s; }
+        .scroll-reveal:nth-child(6) { transition-delay: 0.75s; }
 
         .feature-card {
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .feature-card:hover {
-          transform: translateY(-10px) scale(1.02);
+          transform: perspective(1200px) rotateX(0deg) translateY(-10px) scale(1.02) !important;
           box-shadow: 0 20px 60px rgba(0, 191, 255, 0.4);
           border-color: rgba(0, 191, 255, 0.5) !important;
         }
@@ -185,7 +184,7 @@ export default function Home() {
         }
 
         .reason-card:hover {
-          transform: scale(1.02);
+          transform: perspective(1200px) rotateX(0deg) scale(1.02) !important;
           box-shadow: 0 20px 50px rgba(0, 112, 243, 0.3);
         }
 
@@ -299,7 +298,7 @@ export default function Home() {
           </div>
         </nav>
 
-        {/* Hero Section */}
+        {/* Hero Section - STATICA (no scroll effect) */}
         <div style={{
           position: 'relative',
           zIndex: 1,
@@ -328,6 +327,7 @@ export default function Home() {
             </p>
           </div>
 
+          {/* Pulsanti - STATICI */}
           <div className="scale-in" style={{
             display: 'flex',
             gap: '20px',
@@ -366,7 +366,7 @@ export default function Home() {
             </a>
           </div>
 
-          {/* Stats */}
+          {/* Stats - CON SCROLL EFFECT */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -378,13 +378,12 @@ export default function Home() {
               { label: '€19', desc: "All'anno" },
               { label: '100%', desc: 'Responsive' }
             ].map((stat, i) => (
-              <div key={i} className="scroll-card" style={{
+              <div key={i} className="scroll-reveal" style={{
                 padding: '30px',
                 background: 'rgba(255,255,255,0.02)',
                 borderRadius: '16px',
                 border: '1px solid rgba(255,255,255,0.05)',
-                backdropFilter: 'blur(10px)',
-                transitionDelay: `${i * 0.15}s`
+                backdropFilter: 'blur(10px)'
               }}>
                 <div style={{ 
                   fontSize: '48px', 
@@ -410,7 +409,7 @@ export default function Home() {
           zIndex: 1
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 style={{
+            <h2 className="scroll-reveal" style={{
               fontSize: '48px',
               fontWeight: 'bold',
               textAlign: 'center',
@@ -432,7 +431,7 @@ export default function Home() {
                 { title: 'Presentazione Professionale', desc: 'Un sito web moderno trasmette fiducia e professionalità. I clienti si fidano di più di attività con una presenza online curata e aggiornata.' },
                 { title: 'Solo €19 all\'Anno', desc: 'Altri servizi costano €300-1000. Noi ti offriamo un sito professionale completo a meno di €2 al mese. Prezzo che non trovi da nessun\'altra parte.', highlight: true }
               ].map((reason, i) => (
-                <div key={i} className={`scroll-card reason-card`} style={{
+                <div key={i} className="scroll-reveal reason-card" style={{
                   background: reason.highlight 
                     ? 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)'
                     : 'rgba(255,255,255,0.02)',
@@ -443,8 +442,7 @@ export default function Home() {
                     : '1px solid rgba(255,255,255,0.05)',
                   textAlign: 'center',
                   backdropFilter: 'blur(10px)',
-                  position: 'relative',
-                  transitionDelay: `${i * 0.2}s`
+                  position: 'relative'
                 }}>
                   {reason.highlight && (
                     <div style={{
@@ -490,6 +488,18 @@ export default function Home() {
           margin: '0 auto',
           padding: '100px 40px'
         }}>
+          <h2 className="scroll-reveal" style={{
+            fontSize: '48px',
+            fontWeight: 'bold',
+            textAlign: 'center',
+            marginBottom: '60px',
+            background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            Caratteristiche
+          </h2>
+
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -503,14 +513,13 @@ export default function Home() {
               { title: 'SEO Ottimizzato', desc: 'Indicizzazione automatica sui motori di ricerca' },
               { title: 'Supporto Italiano', desc: 'Assistenza in italiano quando serve' }
             ].map((feature, i) => (
-              <div key={i} className="scroll-card feature-card" style={{
+              <div key={i} className="scroll-reveal feature-card" style={{
                 backgroundColor: 'rgba(255,255,255,0.02)',
                 padding: '40px 30px',
                 borderRadius: '16px',
                 border: '1px solid rgba(255,255,255,0.05)',
                 backdropFilter: 'blur(10px)',
-                textAlign: 'left',
-                transitionDelay: `${i * 0.1}s`
+                textAlign: 'left'
               }}>
                 <h3 style={{ 
                   fontSize: '22px', 
@@ -531,7 +540,7 @@ export default function Home() {
         </div>
 
         {/* Siti Complessi */}
-        <div style={{
+        <div className="scroll-reveal" style={{
           background: 'rgba(0, 191, 255, 0.02)',
           borderTop: '1px solid rgba(255,255,255,0.05)',
           padding: '100px 40px',
@@ -579,7 +588,7 @@ export default function Home() {
         </div>
 
         {/* CTA */}
-        <div style={{
+        <div className="scroll-reveal" style={{
           position: 'relative',
           zIndex: 1,
           maxWidth: '1200px',

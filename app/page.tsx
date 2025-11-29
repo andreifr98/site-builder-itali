@@ -1,6 +1,27 @@
 'use client';
+import { useEffect, useRef } from 'react';
 
 export default function Home() {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const cards = document.querySelectorAll('.scroll-card');
+    cards.forEach((card) => observerRef.current?.observe(card));
+
+    return () => observerRef.current?.disconnect();
+  }, []);
+
   return (
     <>
       <style jsx global>{`
@@ -54,6 +75,17 @@ export default function Home() {
         @keyframes scaleIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes flip-in-right {
+          0% {
+            opacity: 0;
+            transform: perspective(1000px) rotateY(90deg) translateX(100px);
+          }
+          100% {
+            opacity: 1;
+            transform: perspective(1000px) rotateY(0deg) translateX(0);
+          }
         }
 
         .particles {
@@ -127,6 +159,17 @@ export default function Home() {
           z-index: 0;
         }
 
+        .scroll-card {
+          opacity: 0;
+          transform: perspective(1000px) rotateY(90deg) translateX(100px);
+          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scroll-card.visible {
+          opacity: 1;
+          transform: perspective(1000px) rotateY(0deg) translateX(0);
+        }
+
         .feature-card {
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -159,7 +202,7 @@ export default function Home() {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          animation: wave-shine 8s linear infinite;
+          animation: wave-shine 7s linear infinite;
         }
 
         .slide-up {
@@ -194,7 +237,7 @@ export default function Home() {
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 1}s`,
+                  animationDelay: `${Math.random() * 2}s`,
                   animationDuration: `${25 + Math.random() * 20}s`,
                   '--tx': `${tx}px`,
                   '--ty': `${ty}px`
@@ -335,13 +378,13 @@ export default function Home() {
               { label: '€19', desc: "All'anno" },
               { label: '100%', desc: 'Responsive' }
             ].map((stat, i) => (
-              <div key={i} style={{
+              <div key={i} className="scroll-card" style={{
                 padding: '30px',
                 background: 'rgba(255,255,255,0.02)',
                 borderRadius: '16px',
                 border: '1px solid rgba(255,255,255,0.05)',
                 backdropFilter: 'blur(10px)',
-                transition: 'transform 0.3s ease'
+                transitionDelay: `${i * 0.15}s`
               }}>
                 <div style={{ 
                   fontSize: '48px', 
@@ -384,67 +427,57 @@ export default function Home() {
               gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
               gap: '40px'
             }}>
-              <div className="reason-card" style={{
-                background: 'rgba(255,255,255,0.02)',
-                padding: '50px 40px',
-                borderRadius: '20px',
-                border: '1px solid rgba(255,255,255,0.05)',
-                textAlign: 'center',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff' }}>
-                  Visibilità su Google
-                </h3>
-                <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.8', fontSize: '17px' }}>
-                  I tuoi clienti ti cercano online. Con un sito ottimizzato SEO appari su Google quando cercano servizi come il tuo nella tua zona. Più visibilità = più clienti.
-                </p>
-              </div>
-
-              <div className="reason-card" style={{
-                background: 'rgba(255,255,255,0.02)',
-                padding: '50px 40px',
-                borderRadius: '20px',
-                border: '1px solid rgba(255,255,255,0.05)',
-                textAlign: 'center',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff' }}>
-                  Presentazione Professionale
-                </h3>
-                <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.8', fontSize: '17px' }}>
-                  Un sito web moderno trasmette fiducia e professionalità. I clienti si fidano di più di attività con una presenza online curata e aggiornata.
-                </p>
-              </div>
-
-              <div className="reason-card" style={{
-                background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)',
-                padding: '50px 40px',
-                borderRadius: '20px',
-                border: '1px solid rgba(0, 191, 255, 0.2)',
-                textAlign: 'center',
-                position: 'relative',
-                backdropFilter: 'blur(10px)'
-              }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  background: '#0070f3',
-                  color: 'white',
-                  padding: '6px 16px',
+              {[
+                { title: 'Visibilità su Google', desc: 'I tuoi clienti ti cercano online. Con un sito ottimizzato SEO appari su Google quando cercano servizi come il tuo nella tua zona. Più visibilità = più clienti.' },
+                { title: 'Presentazione Professionale', desc: 'Un sito web moderno trasmette fiducia e professionalità. I clienti si fidano di più di attività con una presenza online curata e aggiornata.' },
+                { title: 'Solo €19 all\'Anno', desc: 'Altri servizi costano €300-1000. Noi ti offriamo un sito professionale completo a meno di €2 al mese. Prezzo che non trovi da nessun\'altra parte.', highlight: true }
+              ].map((reason, i) => (
+                <div key={i} className={`scroll-card reason-card`} style={{
+                  background: reason.highlight 
+                    ? 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)'
+                    : 'rgba(255,255,255,0.02)',
+                  padding: '50px 40px',
                   borderRadius: '20px',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
+                  border: reason.highlight 
+                    ? '1px solid rgba(0, 191, 255, 0.2)'
+                    : '1px solid rgba(255,255,255,0.05)',
+                  textAlign: 'center',
+                  backdropFilter: 'blur(10px)',
+                  position: 'relative',
+                  transitionDelay: `${i * 0.2}s`
                 }}>
-                  MIGLIORE OFFERTA
+                  {reason.highlight && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '10px',
+                      right: '10px',
+                      background: '#0070f3',
+                      color: 'white',
+                      padding: '6px 16px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: 'bold'
+                    }}>
+                      MIGLIORE OFFERTA
+                    </div>
+                  )}
+                  <h3 style={{ 
+                    fontSize: '26px', 
+                    marginBottom: '20px', 
+                    marginTop: reason.highlight ? '20px' : '0',
+                    color: '#00bfff' 
+                  }}>
+                    {reason.title}
+                  </h3>
+                  <p style={{ 
+                    color: reason.highlight ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.6)', 
+                    lineHeight: '1.8', 
+                    fontSize: '17px' 
+                  }}>
+                    {reason.desc}
+                  </p>
                 </div>
-                <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff', marginTop: '20px' }}>
-                  Solo €19 all'Anno
-                </h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '17px' }}>
-                  Altri servizi costano €300-1000. Noi ti offriamo un sito professionale completo a meno di €2 al mese. Prezzo che non trovi da nessun'altra parte.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </div>
@@ -470,13 +503,14 @@ export default function Home() {
               { title: 'SEO Ottimizzato', desc: 'Indicizzazione automatica sui motori di ricerca' },
               { title: 'Supporto Italiano', desc: 'Assistenza in italiano quando serve' }
             ].map((feature, i) => (
-              <div key={i} className="feature-card" style={{
+              <div key={i} className="scroll-card feature-card" style={{
                 backgroundColor: 'rgba(255,255,255,0.02)',
                 padding: '40px 30px',
                 borderRadius: '16px',
                 border: '1px solid rgba(255,255,255,0.05)',
                 backdropFilter: 'blur(10px)',
-                textAlign: 'left'
+                textAlign: 'left',
+                transitionDelay: `${i * 0.1}s`
               }}>
                 <h3 style={{ 
                   fontSize: '22px', 

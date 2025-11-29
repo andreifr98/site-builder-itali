@@ -194,7 +194,7 @@ export default function Home() {
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 30}s`,
+                  animationDelay: `${Math.random() * 5}s`,
                   animationDuration: `${25 + Math.random() * 20}s`,
                   '--tx': `${tx}px`,
                   '--ty': `${ty}px`

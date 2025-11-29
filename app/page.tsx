@@ -5,7 +5,7 @@ export default function Home() {
     <>
       <style jsx global>{`
         @keyframes float-particle {
-          0%, 100% {
+          0% {
             transform: translate(0, 0);
             opacity: 0;
           }
@@ -15,14 +15,9 @@ export default function Home() {
           90% {
             opacity: 1;
           }
-          25% {
-            transform: translate(100px, -50px);
-          }
-          50% {
-            transform: translate(-80px, 100px);
-          }
-          75% {
-            transform: translate(60px, 50px);
+          100% {
+            transform: translate(var(--tx), var(--ty));
+            opacity: 0;
           }
         }
 
@@ -77,46 +72,78 @@ export default function Home() {
         
         .particle {
           position: absolute;
-          width: 4px;
-          height: 4px;
-          background: rgba(0, 191, 255, 0.6);
+          width: 3px;
+          height: 3px;
+          background: rgba(0, 191, 255, 0.8);
           border-radius: 50%;
-          box-shadow: 0 0 10px rgba(0, 191, 255, 0.8),
-                      0 0 20px rgba(0, 191, 255, 0.4);
-          animation: float-particle 20s infinite ease-in-out;
+          box-shadow: 
+            0 0 10px rgba(0, 191, 255, 1),
+            0 0 20px rgba(0, 191, 255, 0.6),
+            0 0 30px rgba(0, 191, 255, 0.3);
+          animation: float-particle linear infinite;
+        }
+
+        .particle::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          background: radial-gradient(circle, rgba(0, 191, 255, 0.6) 0%, transparent 70%);
+          border-radius: 50%;
+          filter: blur(3px);
+          transform: scale(4);
+        }
+
+        .particle::after {
+          content: '';
+          position: absolute;
+          width: 200%;
+          height: 200%;
+          background: linear-gradient(to right, transparent, rgba(0, 191, 255, 0.3), transparent);
+          top: -50%;
+          left: -100%;
+          filter: blur(5px);
+          animation: trail 2s linear infinite;
+        }
+
+        @keyframes trail {
+          0% { opacity: 0; transform: translateX(0); }
+          50% { opacity: 0.5; }
+          100% { opacity: 0; transform: translateX(-100px); }
         }
 
         .orb {
           position: absolute;
           border-radius: 50%;
-          filter: blur(60px);
+          filter: blur(80px);
           z-index: 0;
+          opacity: 0.6;
         }
 
         .orb-1 {
           top: 10%;
           left: 10%;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(0, 112, 243, 0.4) 0%, transparent 70%);
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(0, 112, 243, 0.3) 0%, transparent 70%);
           animation: float-orb-1 20s ease-in-out infinite;
         }
 
         .orb-2 {
           top: 60%;
           right: 10%;
-          width: 350px;
-          height: 350px;
-          background: radial-gradient(circle, rgba(0, 191, 255, 0.3) 0%, transparent 70%);
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle, rgba(0, 191, 255, 0.2) 0%, transparent 70%);
           animation: float-orb-2 15s ease-in-out infinite;
         }
 
         .orb-3 {
           bottom: 10%;
           left: 50%;
-          width: 300px;
-          height: 300px;
-          background: radial-gradient(circle, rgba(3, 64, 120, 0.4) 0%, transparent 70%);
+          width: 350px;
+          height: 350px;
+          background: radial-gradient(circle, rgba(3, 64, 120, 0.3) 0%, transparent 70%);
           animation: float-orb-3 18s ease-in-out infinite;
         }
 
@@ -127,8 +154,8 @@ export default function Home() {
           right: 0;
           bottom: 0;
           background-image: 
-            linear-gradient(rgba(0, 191, 255, 0.03) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 191, 255, 0.03) 1px, transparent 1px);
+            linear-gradient(rgba(0, 191, 255, 0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 191, 255, 0.02) 1px, transparent 1px);
           background-size: 50px 50px;
           z-index: 0;
         }
@@ -171,25 +198,31 @@ export default function Home() {
 
       <div style={{ 
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0a1128 0%, #001f54 50%, #034078 100%)',
+        background: '#020510',
         color: 'white',
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Animated particles */}
+        {/* Animated particles con scia */}
         <div className="particles">
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 20}s`,
-                animationDuration: `${15 + Math.random() * 10}s`
-              }}
-            />
-          ))}
+          {[...Array(60)].map((_, i) => {
+            const tx = (Math.random() - 0.5) * 800;
+            const ty = (Math.random() - 0.5) * 800;
+            return (
+              <div
+                key={i}
+                className="particle"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                  animationDelay: `${Math.random() * 25}s`,
+                  animationDuration: `${20 + Math.random() * 15}s`,
+                  '--tx': `${tx}px`,
+                  '--ty': `${ty}px`
+                } as React.CSSProperties}
+              />
+            );
+          })}
         </div>
 
         {/* Animated gradient orbs */}
@@ -209,7 +242,7 @@ export default function Home() {
           justifyContent: 'space-between',
           alignItems: 'center',
           backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)'
+          borderBottom: '1px solid rgba(255,255,255,0.05)'
         }}>
           <div style={{ 
             fontSize: '24px', 
@@ -225,7 +258,7 @@ export default function Home() {
             <a href="/login" style={{ 
               color: 'white', 
               textDecoration: 'none',
-              opacity: 0.8,
+              opacity: 0.7,
               transition: 'opacity 0.3s'
             }}>
               Accedi
@@ -269,7 +302,7 @@ export default function Home() {
             </h1>
             <p className="fade-in" style={{ 
               fontSize: '24px', 
-              color: 'rgba(255,255,255,0.8)',
+              color: 'rgba(255,255,255,0.7)',
               marginBottom: '40px',
               lineHeight: '1.6'
             }}>
@@ -300,14 +333,14 @@ export default function Home() {
               Crea il Tuo Sito →
             </a>
             <a href="#perche" style={{
-              backgroundColor: 'rgba(255,255,255,0.1)',
+              backgroundColor: 'rgba(255,255,255,0.03)',
               color: 'white',
               padding: '18px 48px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontSize: '18px',
               fontWeight: 'bold',
-              border: '1px solid rgba(255,255,255,0.2)',
+              border: '1px solid rgba(255,255,255,0.1)',
               transition: 'all 0.3s ease',
               display: 'inline-block',
               backdropFilter: 'blur(10px)'
@@ -330,9 +363,9 @@ export default function Home() {
             ].map((stat, i) => (
               <div key={i} style={{
                 padding: '30px',
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.02)',
                 borderRadius: '16px',
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.05)',
                 backdropFilter: 'blur(10px)',
                 transition: 'transform 0.3s ease'
               }}>
@@ -344,17 +377,17 @@ export default function Home() {
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
                 }}>{stat.label}</div>
-                <div style={{ color: 'rgba(255,255,255,0.7)' }}>{stat.desc}</div>
+                <div style={{ color: 'rgba(255,255,255,0.6)' }}>{stat.desc}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Perché Section */}
+        {/* Perché Section - SENZA EMOJI */}
         <div id="perche" style={{
-          background: 'rgba(0, 112, 243, 0.05)',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(0, 112, 243, 0.02)',
+          borderTop: '1px solid rgba(255,255,255,0.05)',
+          borderBottom: '1px solid rgba(255,255,255,0.05)',
           padding: '100px 40px',
           position: 'relative',
           zIndex: 1
@@ -378,44 +411,42 @@ export default function Home() {
               gap: '40px'
             }}>
               <div className="reason-card" style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.02)',
                 padding: '50px 40px',
                 borderRadius: '20px',
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.05)',
                 textAlign: 'center',
                 backdropFilter: 'blur(10px)'
               }}>
-                <div style={{ fontSize: '60px', marginBottom: '25px' }}>🔍</div>
                 <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff' }}>
                   Visibilità su Google
                 </h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '17px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.8', fontSize: '17px' }}>
                   I tuoi clienti ti cercano online. Con un sito ottimizzato SEO appari su Google quando cercano servizi come il tuo nella tua zona. Più visibilità = più clienti.
                 </p>
               </div>
 
               <div className="reason-card" style={{
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(255,255,255,0.02)',
                 padding: '50px 40px',
                 borderRadius: '20px',
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.05)',
                 textAlign: 'center',
                 backdropFilter: 'blur(10px)'
               }}>
-                <div style={{ fontSize: '60px', marginBottom: '25px' }}>✨</div>
                 <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff' }}>
                   Presentazione Professionale
                 </h3>
-                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '17px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: '1.8', fontSize: '17px' }}>
                   Un sito web moderno trasmette fiducia e professionalità. I clienti si fidano di più di attività con una presenza online curata e aggiornata.
                 </p>
               </div>
 
               <div className="reason-card" style={{
-                background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.15) 0%, rgba(0, 191, 255, 0.1) 100%)',
+                background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)',
                 padding: '50px 40px',
                 borderRadius: '20px',
-                border: '1px solid rgba(0, 191, 255, 0.3)',
+                border: '1px solid rgba(0, 191, 255, 0.2)',
                 textAlign: 'center',
                 position: 'relative',
                 backdropFilter: 'blur(10px)'
@@ -433,11 +464,10 @@ export default function Home() {
                 }}>
                   MIGLIORE OFFERTA
                 </div>
-                <div style={{ fontSize: '60px', marginBottom: '25px' }}>💰</div>
-                <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff' }}>
+                <h3 style={{ fontSize: '26px', marginBottom: '20px', color: '#00bfff', marginTop: '20px' }}>
                   Solo €19 all'Anno
                 </h3>
-                <p style={{ color: 'rgba(255,255,255,0.8)', lineHeight: '1.8', fontSize: '17px' }}>
+                <p style={{ color: 'rgba(255,255,255,0.7)', lineHeight: '1.8', fontSize: '17px' }}>
                   Altri servizi costano €300-1000. Noi ti offriamo un sito professionale completo a meno di €2 al mese. Prezzo che non trovi da nessun'altra parte.
                 </p>
               </div>
@@ -467,10 +497,10 @@ export default function Home() {
               { title: 'Supporto Italiano', desc: 'Assistenza in italiano quando serve' }
             ].map((feature, i) => (
               <div key={i} className="feature-card" style={{
-                backgroundColor: 'rgba(255,255,255,0.05)',
+                backgroundColor: 'rgba(255,255,255,0.02)',
                 padding: '40px 30px',
                 borderRadius: '16px',
-                border: '1px solid rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.05)',
                 backdropFilter: 'blur(10px)',
                 textAlign: 'left'
               }}>
@@ -482,7 +512,7 @@ export default function Home() {
                   {feature.title}
                 </h3>
                 <p style={{ 
-                  color: 'rgba(255,255,255,0.7)',
+                  color: 'rgba(255,255,255,0.6)',
                   lineHeight: '1.6'
                 }}>
                   {feature.desc}
@@ -494,8 +524,8 @@ export default function Home() {
 
         {/* Siti Complessi */}
         <div style={{
-          background: 'rgba(0, 191, 255, 0.05)',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
+          background: 'rgba(0, 191, 255, 0.02)',
+          borderTop: '1px solid rgba(255,255,255,0.05)',
           padding: '100px 40px',
           position: 'relative',
           zIndex: 1
@@ -506,7 +536,7 @@ export default function Home() {
             </h2>
             <p style={{
               fontSize: '20px',
-              color: 'rgba(255,255,255,0.7)',
+              color: 'rgba(255,255,255,0.6)',
               marginBottom: '40px',
               lineHeight: '1.8'
             }}>
@@ -516,23 +546,23 @@ export default function Home() {
               href="mailto:info@sitofacile.it"
               style={{
                 display: 'inline-block',
-                backgroundColor: 'rgba(255,255,255,0.1)',
+                backgroundColor: 'rgba(255,255,255,0.05)',
                 color: 'white',
                 padding: '18px 48px',
                 borderRadius: '8px',
                 textDecoration: 'none',
                 fontSize: '18px',
                 fontWeight: 'bold',
-                border: '1px solid rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.1)',
                 transition: 'all 0.3s ease',
                 backdropFilter: 'blur(10px)'
               }}
             >
-              📧 Contattaci via Email
+              Contattaci via Email
             </a>
             <p style={{
               marginTop: '20px',
-              color: 'rgba(255,255,255,0.5)',
+              color: 'rgba(255,255,255,0.4)',
               fontSize: '16px'
             }}>
               Rispondiamo entro 24 ore
@@ -550,11 +580,11 @@ export default function Home() {
         }}>
           <div style={{
             padding: '80px 40px',
-            background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.2) 0%, rgba(0, 191, 255, 0.2) 100%)',
+            background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)',
             borderRadius: '20px',
-            border: '1px solid rgba(255,255,255,0.2)',
+            border: '1px solid rgba(255,255,255,0.1)',
             backdropFilter: 'blur(20px)',
-            boxShadow: '0 20px 60px rgba(0, 191, 255, 0.2)',
+            boxShadow: '0 20px 60px rgba(0, 191, 255, 0.1)',
             textAlign: 'center'
           }}>
             <h2 style={{ fontSize: '42px', marginBottom: '20px' }}>
@@ -562,21 +592,21 @@ export default function Home() {
             </h2>
             <p style={{ 
               fontSize: '20px', 
-              color: 'rgba(255,255,255,0.8)',
+              color: 'rgba(255,255,255,0.7)',
               marginBottom: '40px'
             }}>
               Crea il tuo sito professionale in meno tempo di quanto ci vuole per un caffè
             </p>
             <a href="/signup" style={{
-              backgroundColor: 'white',
-              color: '#0a1128',
+              backgroundColor: '#0070f3',
+              color: 'white',
               padding: '18px 48px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontSize: '18px',
               fontWeight: 'bold',
               display: 'inline-block',
-              boxShadow: '0 8px 30px rgba(255,255,255,0.3)',
+              boxShadow: '0 8px 30px rgba(0, 112, 243, 0.4)',
               transition: 'all 0.3s ease'
             }}>
               Inizia Ora Gratis
@@ -590,8 +620,8 @@ export default function Home() {
           zIndex: 1,
           textAlign: 'center',
           padding: '40px',
-          borderTop: '1px solid rgba(255,255,255,0.1)',
-          color: 'rgba(255,255,255,0.6)',
+          borderTop: '1px solid rgba(255,255,255,0.05)',
+          color: 'rgba(255,255,255,0.5)',
           backdropFilter: 'blur(10px)'
         }}>
           <p>© 2025 SitoFacile. Tutti i diritti riservati.</p>

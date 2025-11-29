@@ -159,7 +159,7 @@ export default function Home() {
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          animation: wave-shine 3s linear infinite;
+          animation: wave-shine 8s linear infinite;
         }
 
         .slide-up {

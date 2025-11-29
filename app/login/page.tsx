@@ -31,7 +31,6 @@ export default function LoginPage() {
         return;
       }
 
-      // Login riuscito
       router.push('/dashboard');
     } catch (err) {
       setError('Errore di connessione');
@@ -206,3 +205,4 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}

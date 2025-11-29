@@ -43,138 +43,166 @@ export default function LoginPage() {
     <div style={{
       minHeight: '100vh',
       background: '#020510',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
+      position: 'relative'
     }}>
+      {/* Logo in alto a sinistra */}
       <div style={{
-        maxWidth: '400px',
-        width: '100%',
-        background: 'rgba(255,255,255,0.05)',
-        padding: '40px',
-        borderRadius: '16px',
-        border: '1px solid rgba(255,255,255,0.1)',
-        backdropFilter: 'blur(10px)'
+        position: 'absolute',
+        top: '20px',
+        left: '40px',
+        zIndex: 10
       }}>
-        <h1 style={{
-          fontSize: '32px',
-          fontWeight: 'bold',
-          marginBottom: '10px',
-          textAlign: 'center',
-          color: 'white'
-        }}>
-          Accedi
-        </h1>
-        <p style={{
-          textAlign: 'center',
-          color: 'rgba(255,255,255,0.6)',
-          marginBottom: '30px'
-        }}>
-          Benvenuto su SitoFacile
-        </p>
+        <a 
+          href="/"
+          style={{ 
+            fontSize: '24px', 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          SitoFacile
+        </a>
+      </div>
 
-        {error && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            color: '#ef4444',
-            padding: '12px',
-            borderRadius: '8px',
-            marginBottom: '20px',
+      {/* Form Login */}
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px'
+      }}>
+        <div style={{
+          maxWidth: '400px',
+          width: '100%',
+          background: 'rgba(255,255,255,0.05)',
+          padding: '40px',
+          borderRadius: '16px',
+          border: '1px solid rgba(255,255,255,0.1)',
+          backdropFilter: 'blur(10px)'
+        }}>
+          <h1 style={{
+            fontSize: '32px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+            textAlign: 'center',
+            color: 'white'
+          }}>
+            Accedi
+          </h1>
+          <p style={{
+            textAlign: 'center',
+            color: 'rgba(255,255,255,0.6)',
+            marginBottom: '30px'
+          }}>
+            Benvenuto su SitoFacile
+          </p>
+
+          {error && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#ef4444',
+              padding: '12px',
+              borderRadius: '8px',
+              marginBottom: '20px',
+              fontSize: '14px'
+            }}>
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '14px'
+              }}>
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '16px'
+                }}
+                placeholder="email@esempio.it"
+              />
+            </div>
+
+            <div style={{ marginBottom: '30px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                color: 'rgba(255,255,255,0.8)',
+                fontSize: '14px'
+              }}>
+                Password
+              </label>
+              <input
+                type="password"
+                required
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '16px'
+                }}
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: loading ? 'rgba(0, 112, 243, 0.5)' : '#0070f3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 'bold',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            >
+              {loading ? 'Accesso...' : 'Accedi'}
+            </button>
+          </form>
+
+          <p style={{
+            textAlign: 'center',
+            marginTop: '20px',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: '14px'
           }}>
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: 'rgba(255,255,255,0.8)',
-              fontSize: '14px'
-            }}>
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-              placeholder="email@esempio.it"
-            />
-          </div>
-
-          <div style={{ marginBottom: '30px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: 'rgba(255,255,255,0.8)',
-              fontSize: '14px'
-            }}>
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                color: 'white',
-                fontSize: '16px'
-              }}
-              placeholder="••••••••"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: loading ? 'rgba(0, 112, 243, 0.5)' : '#0070f3',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            {loading ? 'Accesso...' : 'Accedi'}
-          </button>
-        </form>
-
-        <p style={{
-          textAlign: 'center',
-          marginTop: '20px',
-          color: 'rgba(255,255,255,0.6)',
-          fontSize: '14px'
-        }}>
-          Non hai un account?{' '}
-          <a href="/signup" style={{ color: '#0070f3', textDecoration: 'none' }}>
-            Registrati
-          </a>
-        </p>
+            Non hai un account?{' '}
+            <a href="/signup" style={{ color: '#0070f3', textDecoration: 'none' }}>
+              Registrati
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
-}

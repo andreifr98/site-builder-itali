@@ -13,7 +13,7 @@ export default function Home() {
             opacity: 1;
           }
           90% {
-            opacity: 1;
+            opacity: 0.8;
           }
           100% {
             transform: translate(var(--tx), var(--ty));
@@ -21,21 +21,15 @@ export default function Home() {
           }
         }
 
-        @keyframes float-orb-1 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -30px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        @keyframes float-orb-2 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(-40px, 30px) scale(0.9); }
-          66% { transform: translate(30px, -20px) scale(1.1); }
-        }
-
-        @keyframes float-orb-3 {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(20px, -40px) scale(1.05); }
+        @keyframes pulse-orb {
+          0%, 100% { 
+            transform: scale(1);
+            opacity: 0.4;
+          }
+          50% { 
+            transform: scale(1.2);
+            opacity: 0.7;
+          }
         }
 
         @keyframes slideUp {
@@ -72,44 +66,26 @@ export default function Home() {
         
         .particle {
           position: absolute;
-          width: 3px;
-          height: 3px;
-          background: rgba(0, 191, 255, 0.8);
+          width: 2px;
+          height: 2px;
+          background: rgba(0, 191, 255, 0.9);
           border-radius: 50%;
           box-shadow: 
-            0 0 10px rgba(0, 191, 255, 1),
-            0 0 20px rgba(0, 191, 255, 0.6),
-            0 0 30px rgba(0, 191, 255, 0.3);
+            0 0 6px rgba(0, 191, 255, 0.8),
+            0 0 12px rgba(0, 191, 255, 0.4);
           animation: float-particle linear infinite;
         }
 
         .particle::before {
           content: '';
           position: absolute;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle, rgba(0, 191, 255, 0.6) 0%, transparent 70%);
-          border-radius: 50%;
-          filter: blur(3px);
-          transform: scale(4);
-        }
-
-        .particle::after {
-          content: '';
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(to right, transparent, rgba(0, 191, 255, 0.3), transparent);
-          top: -50%;
-          left: -100%;
-          filter: blur(5px);
-          animation: trail 2s linear infinite;
-        }
-
-        @keyframes trail {
-          0% { opacity: 0; transform: translateX(0); }
-          50% { opacity: 0.5; }
-          100% { opacity: 0; transform: translateX(-100px); }
+          width: 40px;
+          height: 2px;
+          background: linear-gradient(to left, rgba(0, 191, 255, 0.6), rgba(0, 191, 255, 0.3), transparent);
+          left: -40px;
+          top: 0;
+          filter: blur(1px);
+          opacity: 0.5;
         }
 
         .orb {
@@ -117,34 +93,25 @@ export default function Home() {
           border-radius: 50%;
           filter: blur(80px);
           z-index: 0;
-          opacity: 0.6;
+          animation: pulse-orb 4s ease-in-out infinite;
         }
 
         .orb-1 {
-          top: 10%;
-          left: 10%;
+          top: 20%;
+          left: 15%;
           width: 500px;
           height: 500px;
-          background: radial-gradient(circle, rgba(0, 112, 243, 0.3) 0%, transparent 70%);
-          animation: float-orb-1 20s ease-in-out infinite;
+          background: radial-gradient(circle, rgba(0, 112, 243, 0.6) 0%, transparent 70%);
+          animation-delay: 0s;
         }
 
         .orb-2 {
-          top: 60%;
-          right: 10%;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(0, 191, 255, 0.2) 0%, transparent 70%);
-          animation: float-orb-2 15s ease-in-out infinite;
-        }
-
-        .orb-3 {
-          bottom: 10%;
-          left: 50%;
-          width: 350px;
-          height: 350px;
-          background: radial-gradient(circle, rgba(3, 64, 120, 0.3) 0%, transparent 70%);
-          animation: float-orb-3 18s ease-in-out infinite;
+          bottom: 20%;
+          right: 15%;
+          width: 450px;
+          height: 450px;
+          background: radial-gradient(circle, rgba(0, 191, 255, 0.5) 0%, transparent 70%);
+          animation-delay: 2s;
         }
 
         .grid-overlay {
@@ -154,8 +121,8 @@ export default function Home() {
           right: 0;
           bottom: 0;
           background-image: 
-            linear-gradient(rgba(0, 191, 255, 0.02) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 191, 255, 0.02) 1px, transparent 1px);
+            linear-gradient(rgba(0, 191, 255, 0.015) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 191, 255, 0.015) 1px, transparent 1px);
           background-size: 50px 50px;
           z-index: 0;
         }
@@ -203,11 +170,11 @@ export default function Home() {
         position: 'relative',
         overflow: 'hidden'
       }}>
-        {/* Animated particles con scia */}
+        {/* 90 Particelle con scia sottile */}
         <div className="particles">
-          {[...Array(60)].map((_, i) => {
-            const tx = (Math.random() - 0.5) * 800;
-            const ty = (Math.random() - 0.5) * 800;
+          {[...Array(90)].map((_, i) => {
+            const tx = (Math.random() - 0.5) * 1200;
+            const ty = (Math.random() - 0.5) * 1200;
             return (
               <div
                 key={i}
@@ -215,8 +182,8 @@ export default function Home() {
                 style={{
                   left: `${Math.random() * 100}%`,
                   top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 25}s`,
-                  animationDuration: `${20 + Math.random() * 15}s`,
+                  animationDelay: `${Math.random() * 30}s`,
+                  animationDuration: `${25 + Math.random() * 20}s`,
                   '--tx': `${tx}px`,
                   '--ty': `${ty}px`
                 } as React.CSSProperties}
@@ -225,10 +192,9 @@ export default function Home() {
           })}
         </div>
 
-        {/* Animated gradient orbs */}
+        {/* 2 Orb pulsanti */}
         <div className="orb orb-1" />
         <div className="orb orb-2" />
-        <div className="orb orb-3" />
 
         {/* Grid overlay */}
         <div className="grid-overlay" />
@@ -383,7 +349,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Perché Section - SENZA EMOJI */}
+        {/* Perché Section */}
         <div id="perche" style={{
           background: 'rgba(0, 112, 243, 0.02)',
           borderTop: '1px solid rgba(255,255,255,0.05)',

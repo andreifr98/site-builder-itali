@@ -20,7 +20,6 @@ export default function SignupPage() {
     setLoading(true);
 
     try {
-      // Chiama API signup
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,7 +34,6 @@ export default function SignupPage() {
         return;
       }
 
-      // Auto-login dopo registrazione
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
@@ -48,7 +46,6 @@ export default function SignupPage() {
         return;
       }
 
-      // Redirect a dashboard
       router.push('/dashboard');
     } catch (err) {
       setError('Errore di connessione');
@@ -250,3 +247,4 @@ export default function SignupPage() {
       </div>
     </div>
   );
+}

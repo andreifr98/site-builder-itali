@@ -1,18 +1,23 @@
-export const metadata = {
-  title: 'SitoFacile - Il Tuo Sito in 5 Minuti',
-  description: 'Crea il tuo sito web professionale in pochi minuti',
-}
+'use client';
+
+import { SessionProvider } from 'next-auth/react';
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="it">
-      <body style={{ margin: 0, fontFamily: 'Arial, sans-serif' }}>
-        {children}
+      <head>
+        <title>SitoFacile - Crea il tuo sito in 5 minuti</title>
+        <meta name="description" content="Creazione automatica di siti web professionali per ristoranti, negozi e professionisti italiani" />
+      </head>
+      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif' }}>
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
-  )
+  );
 }

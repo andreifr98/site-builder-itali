@@ -32,6 +32,15 @@ export default function Home() {
           }
         }
 
+        @keyframes wave-shine {
+          0% {
+            background-position: -200% center;
+          }
+          100% {
+            background-position: 200% center;
+          }
+        }
+
         @keyframes slideUp {
           from { opacity: 0; transform: translateY(30px); }
           to { opacity: 1; transform: translateY(0); }
@@ -45,15 +54,6 @@ export default function Home() {
         @keyframes scaleIn {
           from { opacity: 0; transform: scale(0.9); }
           to { opacity: 1; transform: scale(1); }
-        }
-
-        @keyframes pulse-glow {
-          0%, 100% {
-            text-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
-          }
-          50% {
-            text-shadow: 0 0 40px rgba(0, 191, 255, 0.6);
-          }
         }
 
         .particles {
@@ -147,7 +147,19 @@ export default function Home() {
         }
 
         .animated-title {
-          animation: pulse-glow 3s ease-in-out infinite;
+          background: linear-gradient(
+            90deg,
+            #ffffff 0%, 
+            #00bfff 25%, 
+            #ffffff 50%, 
+            #00bfff 75%, 
+            #ffffff 100%
+          );
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: wave-shine 3s linear infinite;
         }
 
         .slide-up {
@@ -258,11 +270,7 @@ export default function Home() {
               fontSize: '72px', 
               fontWeight: '700',
               marginBottom: '20px',
-              lineHeight: '1.2',
-              background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
+              lineHeight: '1.2'
             }}>
               Il Tuo Sito Web<br/>in 5 Minuti
             </h1>

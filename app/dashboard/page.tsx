@@ -296,21 +296,34 @@ export default function DashboardPage() {
                     >
                       Visualizza
                     </a>
-                    <button
+                      <button
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`/api/sites/${site.id}/publish`, {
+                            method: 'POST',
+                          });
+                          if (res.ok) {
+                            fetchSites(); // Ricarica i siti
+                          }
+                        } catch (error) {
+                          console.error('Error:', error);
+                        }
+                      }}
                       style={{
                         flex: 1,
                         padding: '10px',
-                        background: '#0070f3',
+                        background: site.published ? 'rgba(255,193,7,0.2)' : '#22c55e',
                         color: 'white',
-                        border: 'none',
+                        border: site.published ? '1px solid rgba(255,193,7,0.5)' : 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
                         fontSize: '14px',
                         fontWeight: '500'
                       }}
                     >
-                      Modifica
+                      {site.published ? 'Nascondi' : '✓ Pubblica'}
                     </button>
+
                   </div>
                 </div>
               ))}

@@ -2,8 +2,8 @@ type Site = {
   businessName: string;
   category: string;
   description: string | null;
-  phone: string;
-  email: string;
+  phone: string | null;
+  email: string | null;
   address: string | null;
   hours: string | null;
 };

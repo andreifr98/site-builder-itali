@@ -68,6 +68,19 @@ export default function DashboardPage() {
     router.push('/');
   };
 
+  const handlePublishToggle = async (siteId: string) => {
+    try {
+      const res = await fetch(`/api/sites/${siteId}/publish`, {
+        method: 'POST',
+      });
+      if (res.ok) {
+        fetchSites();
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const categoryEmojis: { [key: string]: string } = {
     ristorante: '🍝',
     bar: '☕',
@@ -277,43 +290,52 @@ export default function DashboardPage() {
                     </span>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <a
-                      href={`https://${site.subdomain}.sitofacile.it`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <a
+                        href={`/s/${site.subdomain}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          flex: 1,
+                          textAlign: 'center',
+                          padding: '10px',
+                          background: 'rgba(255,255,255,0.05)',
+                          color: 'white',
+                          borderRadius: '6px',
+                          textDecoration: 'none',
+                          fontSize: '14px',
+                          border: '1px solid rgba(255,255,255,0.1)'
+                        }}
+                      >
+                        👁️ Visualizza
+                      </a>
+                      <a
+                        href={`/edit/${site.id}`}
+                        style={{
+                          flex: 1,
+                          textAlign: 'center',
+                          padding: '10px',
+                          background: '#0070f3',
+                          color: 'white',
+                          borderRadius: '6px',
+                          textDecoration: 'none',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          border: 'none'
+                        }}
+                      >
+                        ✏️ Modifica
+                      </a>
+                    </div>
+                    
+                    <button
+                      onClick={() => handlePublishToggle(site.id)}
                       style={{
-                        flex: 1,
-                        textAlign: 'center',
-                        padding: '10px',
-                        background: 'rgba(255,255,255,0.05)',
-                        color: 'white',
-                        borderRadius: '6px',
-                        textDecoration: 'none',
-                        fontSize: '14px',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                      }}
-                    >
-                      Visualizza
-                    </a>
-                      <button
-                      onClick={async () => {
-                        try {
-                          const res = await fetch(`/api/sites/${site.id}/publish`, {
-                            method: 'POST',
-                          });
-                          if (res.ok) {
-                            fetchSites(); // Ricarica i siti
-                          }
-                        } catch (error) {
-                          console.error('Error:', error);
-                        }
-                      }}
-                      style={{
-                        flex: 1,
+                        width: '100%',
                         padding: '10px',
                         background: site.published ? 'rgba(255,193,7,0.2)' : '#22c55e',
-                        color: 'white',
+                        color: site.published ? '#ffc107' : 'white',
                         border: site.published ? '1px solid rgba(255,193,7,0.5)' : 'none',
                         borderRadius: '6px',
                         cursor: 'pointer',
@@ -321,9 +343,8 @@ export default function DashboardPage() {
                         fontWeight: '500'
                       }}
                     >
-                      {site.published ? 'Nascondi' : '✓ Pubblica'}
+                      {site.published ? '🔒 Nascondi' : '🚀 Pubblica'}
                     </button>
-
                   </div>
                 </div>
               ))}

@@ -2,17 +2,49 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+type Site = {
+  id: string;
+  businessName: string;
+  category: string;
+  subdomain: string;
+  published: boolean;
+  views: number;
+  createdAt: string;
+  templateId: number;
+};
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [sites, setSites] = useState<Site[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     }
+    
+    if (status === 'authenticated') {
+      fetchSites();
+    }
   }, [status, router]);
+
+  const fetchSites = async () => {
+    try {
+      const res = await fetch('/api/sites');
+      const data = await res.json();
+      
+      if (res.ok) {
+        setSites(data.sites);
+      }
+    } catch (error) {
+      console.error('Error fetching sites:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (status === 'loading') {
     return (
@@ -29,13 +61,19 @@ export default function DashboardPage() {
     );
   }
 
-  if (!session) {
-    return null;
-  }
+  if (!session) return null;
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push('/');
+  };
+
+  const categoryEmojis: { [key: string]: string } = {
+    ristorante: '🍝',
+    bar: '☕',
+    parrucchiere: '💇',
+    negozio: '🛍️',
+    artigiano: '🔨',
   };
 
   return (
@@ -53,15 +91,20 @@ export default function DashboardPage() {
         borderBottom: '1px solid rgba(255,255,255,0.1)',
         backdropFilter: 'blur(10px)'
       }}>
-        <div style={{ 
-          fontSize: '24px', 
-          fontWeight: 'bold',
-          background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
-        }}>
+        <a 
+          href="/"
+          style={{ 
+            fontSize: '24px', 
+            fontWeight: 'bold',
+            background: 'linear-gradient(135deg, #ffffff 0%, #00bfff 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }}
+        >
           SitoFacile
-        </div>
+        </a>
         
         <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
           <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
@@ -112,75 +155,167 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* Card Crea Nuovo Sito */}
-        <div style={{
-          background: 'linear-gradient(135deg, rgba(0, 112, 243, 0.1) 0%, rgba(0, 191, 255, 0.05) 100%)',
-          padding: '60px 40px',
-          borderRadius: '20px',
-          border: '1px solid rgba(0, 191, 255, 0.2)',
-          textAlign: 'center',
-          backdropFilter: 'blur(10px)'
-        }}>
-          <h2 style={{
-            fontSize: '32px',
-            marginBottom: '20px',
-            color: '#00bfff'
-          }}>
-            Crea il Tuo Primo Sito
-          </h2>
-          <p style={{
-            fontSize: '18px',
-            color: 'rgba(255,255,255,0.7)',
-            marginBottom: '30px',
-            lineHeight: '1.6'
-          }}>
-            Inizia a costruire la tua presenza online in meno di 5 minuti.<br/>
-            Scegli un template, inserisci i tuoi dati e pubblica!
-          </p>
-          <a
-            href="/create"
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#0070f3',
-              color: 'white',
-              padding: '16px 40px',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              boxShadow: '0 8px 30px rgba(0, 112, 243, 0.4)',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            Crea Nuovo Sito →
-          </a>
-        </div>
+        {/* Bottone Crea Nuovo Sito */}
+        <a
+          href="/create"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '10px',
+            backgroundColor: '#0070f3',
+            color: 'white',
+            padding: '14px 28px',
+            borderRadius: '8px',
+            textDecoration: 'none',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            boxShadow: '0 4px 20px rgba(0, 112, 243, 0.4)',
+            marginBottom: '40px'
+          }}
+        >
+          <span>+</span> Crea Nuovo Sito
+        </a>
 
-        {/* Sezione I Miei Siti (vuota per ora) */}
-        <div style={{
-          marginTop: '60px'
-        }}>
+        {/* Sezione I Miei Siti */}
+        <div style={{ marginTop: '60px' }}>
           <h2 style={{
             fontSize: '28px',
             marginBottom: '30px'
           }}>
-            I Miei Siti
+            I Miei Siti ({sites.length})
           </h2>
-          <div style={{
-            background: 'rgba(255,255,255,0.02)',
-            padding: '60px 40px',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.05)',
-            textAlign: 'center'
-          }}>
-            <p style={{
-              color: 'rgba(255,255,255,0.5)',
-              fontSize: '16px'
+
+          {loading ? (
+            <div style={{
+              background: 'rgba(255,255,255,0.02)',
+              padding: '40px',
+              borderRadius: '16px',
+              textAlign: 'center',
+              color: 'rgba(255,255,255,0.5)'
             }}>
-              Non hai ancora creato nessun sito.<br/>
-              Clicca su "Crea Nuovo Sito" per iniziare!
-            </p>
-          </div>
+              Caricamento...
+            </div>
+          ) : sites.length === 0 ? (
+            <div style={{
+              background: 'rgba(255,255,255,0.02)',
+              padding: '60px 40px',
+              borderRadius: '16px',
+              border: '1px solid rgba(255,255,255,0.05)',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                color: 'rgba(255,255,255,0.5)',
+                fontSize: '16px',
+                marginBottom: '20px'
+              }}>
+                Non hai ancora creato nessun sito.
+              </p>
+              <a
+                href="/create"
+                style={{
+                  display: 'inline-block',
+                  backgroundColor: '#0070f3',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Crea il Tuo Primo Sito
+              </a>
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '20px'
+            }}>
+              {sites.map((site) => (
+                <div
+                  key={site.id}
+                  style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
+                    <span style={{ fontSize: '32px' }}>{categoryEmojis[site.category] || '🌐'}</span>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ fontSize: '18px', marginBottom: '5px' }}>{site.businessName}</h3>
+                      <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>
+                        {site.subdomain}.sitofacile.it
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    gap: '10px',
+                    marginBottom: '15px',
+                    fontSize: '12px'
+                  }}>
+                    <span style={{
+                      padding: '4px 10px',
+                      background: site.published ? 'rgba(34, 197, 94, 0.2)' : 'rgba(156, 163, 175, 0.2)',
+                      color: site.published ? '#22c55e' : '#9ca3af',
+                      borderRadius: '12px'
+                    }}>
+                      {site.published ? '✓ Pubblicato' : '○ Bozza'}
+                    </span>
+                    <span style={{
+                      padding: '4px 10px',
+                      background: 'rgba(255,255,255,0.05)',
+                      borderRadius: '12px',
+                      color: 'rgba(255,255,255,0.6)'
+                    }}>
+                      👁️ {site.views} visite
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <a
+                      href={`https://${site.subdomain}.sitofacile.it`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        padding: '10px',
+                        background: 'rgba(255,255,255,0.05)',
+                        color: 'white',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        fontSize: '14px',
+                        border: '1px solid rgba(255,255,255,0.1)'
+                      }}
+                    >
+                      Visualizza
+                    </a>
+                    <button
+                      style={{
+                        flex: 1,
+                        padding: '10px',
+                        background: '#0070f3',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Modifica
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

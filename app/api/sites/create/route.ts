@@ -8,10 +8,22 @@ export async function POST(request: Request) {
     // Verifica autenticazione
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {  // ✅ CAMBIA QUI
       return NextResponse.json(
         { error: 'Non autorizzato' },
         { status: 401 }
+      );
+    }
+
+    // ✅ AGGIUNGI QUESTO
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Utente non trovato' },
+        { status: 404 }
       );
     }
 
@@ -52,7 +64,7 @@ export async function POST(request: Request) {
     // Crea il sito
     const site = await prisma.site.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,  // ✅ USA user.id
         businessName,
         category,
         address: address || null,
@@ -78,7 +90,9 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Create site error:', error);
     return NextResponse.json(
-      { error: 'Errore nella creazione del sito' },
+      { error: 'Errore nella creazione del sito',
+        details: (error as Error).message
+      },
       { status: 500 }
     );
   }

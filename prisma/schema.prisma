@@ -40,6 +40,7 @@ model Site {
   published    Boolean  @default(false)
   
   logoUrl      String?
+  heroImageUrl String?
   photos       String?  @db.Text
   
   metaTitle    String?
